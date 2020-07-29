@@ -23,15 +23,26 @@ export default class Vimeo extends Component {
     this.duration = null
     getSDK(SDK_URL, SDK_GLOBAL).then(Vimeo => {
       if (!this.container) return
-      this.player = new Vimeo.Player(this.container, {
-        url,
-        autoplay: this.props.playing,
-        muted: this.props.muted,
-        loop: this.props.loop,
-        playsinline: this.props.playsinline,
-        controls: this.props.controls,
-        ...this.props.config.playerOptions
-      })
+      
+      if(this.props.config.playerOptions.createIframe) {
+          const tag = document.createElement("iframe");
+          tag.src = url
+          tag.frameBorder = '0';
+          tag.allow = 'autoplay;'
+          this.container.appendChild(tag);
+          this.player = new Vimeo.Player(tag);
+        } else {
+          this.player = new Vimeo.Player(this.container, {
+            url,
+            autoplay: this.props.playing,
+            muted: this.props.muted,
+            loop: this.props.loop,
+            playsinline: this.props.playsinline,
+            controls: this.props.controls,
+            ...this.props.config.playerOptions
+          })
+        }
+      
       this.player.ready().then(() => {
         const iframe = this.container.querySelector('iframe')
         iframe.style.width = '100%'
