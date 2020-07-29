@@ -100,14 +100,24 @@ var Vimeo = /*#__PURE__*/function (_Component) {
       this.duration = null;
       (0, _utils.getSDK)(SDK_URL, SDK_GLOBAL).then(function (Vimeo) {
         if (!_this2.container) return;
-        _this2.player = new Vimeo.Player(_this2.container, _objectSpread({
-          url: url,
-          autoplay: _this2.props.playing,
-          muted: _this2.props.muted,
-          loop: _this2.props.loop,
-          playsinline: _this2.props.playsinline,
-          controls: _this2.props.controls
-        }, _this2.props.config.playerOptions));
+        
+        if(_this2.props.config.playerOptions.createIframe) {
+          var tag = document.createElement("iframe");
+          tag.src = url
+          tag.frameBorder = '0';
+          tag.allow = 'autoplay;'
+          _this2.container.appendChild(tag);
+          _this2.player = new Vimeo.Player(tag);
+        } else {
+          _this2.player = new Vimeo.Player(_this2.container, _objectSpread({
+            url: url,
+            autoplay: _this2.props.playing,
+            muted: _this2.props.muted,
+            loop: _this2.props.loop,
+            playsinline: _this2.props.playsinline,
+            controls: _this2.props.controls
+          }, _this2.props.config.playerOptions));
+        }
 
         _this2.player.ready().then(function () {
           var iframe = _this2.container.querySelector('iframe');
